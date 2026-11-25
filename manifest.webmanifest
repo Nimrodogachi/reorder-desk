@@ -1,0 +1,13 @@
+{
+  "name": "Reorder Desk",
+  "short_name": "Reorder Desk",
+  "description": "See who to thank, remind and win back today, and send each message on WhatsApp with one tap.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7f6",
+  "theme_color": "#0f766e",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

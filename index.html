@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reorder Desk · WhatsApp reorder reminders for small shops</title>
+<meta name="description" content="Free, open-source reorder reminders for small shops. See who to thank, remind and win back today, and send each message on WhatsApp with one tap. No server, no sign-up, your data stays on your phone.">
+<meta name="theme-color" content="#0f766e">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <div class="brand">
+    <img src="assets/icon.svg" alt="" width="32" height="32">
+    <div>
+      <div class="app-name">Reorder Desk</div>
+      <div class="shop-line" id="shopLine">Set your shop name in Settings</div>
+    </div>
+  </div>
+  <div class="today" id="todayLine"></div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <button type="button" data-tab="today" aria-current="page">Today <span class="badge" id="badgeToday" hidden></span></button>
+  <button type="button" data-tab="orders">Orders</button>
+  <button type="button" data-tab="products">Products</button>
+  <button type="button" data-tab="messages">Messages</button>
+  <button type="button" data-tab="report">Report</button>
+  <button type="button" data-tab="settings">Settings</button>
+</nav>
+
+<main id="main">
+  <div id="storageWarning" class="notice warn" hidden></div>
+
+  <!-- TODAY -->
+  <section id="tab-today" class="tab" aria-labelledby="h-today">
+    <h1 id="h-today" class="visually-hidden">Today</h1>
+    <div id="todayContent"></div>
+  </section>
+
+  <!-- ORDERS -->
+  <section id="tab-orders" class="tab" hidden aria-labelledby="h-orders">
+    <h1 id="h-orders">Orders</h1>
+    <details class="card" open id="addOrderBox">
+      <summary><h2>Add an order</h2></summary>
+      <form id="orderForm" autocomplete="off">
+        <div class="grid2">
+          <label>Customer name<input name="name" placeholder="Wanjiku Kamau"></label>
+          <label>WhatsApp number<input name="phone" inputmode="tel" placeholder="0712 345 678" required></label>
+          <label>Product<input name="product" list="productList" placeholder="Dog food 3kg" required></label>
+          <label>Order date<input name="date" type="date" required></label>
+          <label>Quantity<input name="qty" type="number" min="1" step="1" value="1"></label>
+          <label>Amount (optional)<input name="amount" inputmode="decimal" placeholder="2450"></label>
+        </div>
+        <label class="check"><input type="checkbox" name="consent" required> This customer agreed to get messages from my shop</label>
+        <button type="submit" class="btn">Save order</button>
+        <p class="form-msg" id="orderFormMsg" role="status"></p>
+      </form>
+      <datalist id="productList"></datalist>
+    </details>
+
+    <details class="card" id="importBox">
+      <summary><h2>Import orders from a spreadsheet (CSV)</h2></summary>
+      <p class="muted">Columns needed: <b>phone</b>, <b>product</b>, <b>date</b>. Optional: <b>name</b>, <b>qty</b>, <b>amount</b>. Dates like 25/11/2026 are read day first. Orders you already saved are skipped.</p>
+      <p><a href="sample/sample-orders-DEMO.csv" download>Download a sample CSV</a></p>
+      <label>Choose a CSV file<input type="file" id="csvFile" accept=".csv,text/csv,text/plain"></label>
+      <label>Or paste CSV text<textarea id="csvText" rows="4" placeholder="name,phone,product,date&#10;Wanjiku,0712345678,Dog food 3kg,01/11/2026"></textarea></label>
+      <label class="check"><input type="checkbox" id="csvConsent"> The customers in this file agreed to get messages from my shop</label>
+      <button type="button" class="btn" data-action="import-csv">Import</button>
+      <div id="importResult" role="status"></div>
+    </details>
+
+    <div class="card">
+      <div class="row-between">
+        <h2>Saved orders <span class="muted" id="orderCount"></span></h2>
+        <button type="button" class="btn small ghost" data-action="export-orders">Export CSV</button>
+      </div>
+      <label class="visually-hidden" for="orderSearch">Search orders</label>
+      <input id="orderSearch" type="search" placeholder="Search name, number or product">
+      <div id="orderTable"></div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="tab-products" class="tab" hidden aria-labelledby="h-products">
+    <h1 id="h-products">Products</h1>
+    <p class="muted">Tell Reorder Desk how many days one unit lasts a typical customer. Reminders go out <span id="leadDaysText">3</span> days before it runs out.</p>
+    <div class="card">
+      <h2>Days calculator</h2>
+      <div class="grid3">
+        <label>Pack size<input id="calcPack" inputmode="decimal" placeholder="3000"></label>
+        <label>Used per day<input id="calcDaily" inputmode="decimal" placeholder="150"></label>
+        <label>Lasts<output id="calcOut">–</output></label>
+      </div>
+      <p class="muted small">Use the same unit for both, for example grams: a 3 kg bag at 150 g a day lasts 20 days.</p>
+    </div>
+    <form id="productForm" class="card" autocomplete="off">
+      <h2>Add a product</h2>
+      <div class="grid2">
+        <label>Product name<input name="name" required placeholder="Coffee 500g"></label>
+        <label>Days one unit lasts<input name="lastsDays" type="number" min="1" step="1" required placeholder="30"></label>
+      </div>
+      <button type="submit" class="btn">Add product</button>
+    </form>
+    <div id="productTable"></div>
+  </section>
+
+  <!-- MESSAGES -->
+  <section id="tab-messages" class="tab" hidden aria-labelledby="h-messages">
+    <h1 id="h-messages">Messages</h1>
+    <div class="card">
+      <label>Message language
+        <select id="langSelect">
+          <option value="en">English</option>
+          <option value="sw">Kiswahili</option>
+        </select>
+      </label>
+      <p class="muted small">Placeholders: <code>{name}</code> first name, <code>{shop}</code> shop name, <code>{product}</code>, <code>{date}</code> order date, <code>{days}</code> days it lasts. Keep the STOP line so customers can opt out.</p>
+    </div>
+    <div id="templateEditors"></div>
+  </section>
+
+  <!-- REPORT -->
+  <section id="tab-report" class="tab" hidden aria-labelledby="h-report">
+    <h1 id="h-report">Report</h1>
+    <div id="reportContent"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="tab-settings" class="tab" hidden aria-labelledby="h-settings">
+    <h1 id="h-settings">Settings</h1>
+    <form id="settingsForm" class="card" autocomplete="off">
+      <h2>Your shop</h2>
+      <div class="grid2">
+        <label>Shop name<input name="shopName" placeholder="Mbwa Bora Pet Supplies"></label>
+        <label>Default country code<input name="countryCode" inputmode="numeric" placeholder="254"></label>
+      </div>
+      <h2>Timing</h2>
+      <div class="grid2">
+        <label>Remind this many days before it runs out<input name="leadDays" type="number" min="0" max="30"></label>
+        <label>Win back after (times the days it lasts)<input name="winBackMultiplier" type="number" min="1.5" max="6" step="0.5"></label>
+        <label>Thank customers within (days of the order)<input name="thankYouWindowDays" type="number" min="0" max="14"></label>
+        <label>Show upcoming reminders for the next (days)<input name="upcomingDays" type="number" min="1" max="30"></label>
+        <label>Count an order as "after a message" within (days)<input name="followUpWindowDays" type="number" min="1" max="60"></label>
+      </div>
+      <label class="check"><input type="checkbox" name="thankYouFirstOrderOnly"> Thank only first-time customers</label>
+      <label class="check"><input type="checkbox" name="showPromo"> Show the done-for-you setup link</label>
+      <button type="submit" class="btn">Save settings</button>
+      <p class="form-msg" id="settingsMsg" role="status"></p>
+    </form>
+
+    <div class="card">
+      <h2>Stopped numbers (STOP list)</h2>
+      <p class="muted small">When a customer replies STOP or asks you not to message them, add them here. Reorder Desk will never suggest them again.</p>
+      <form id="optOutForm" class="inline-form" autocomplete="off">
+        <label class="visually-hidden" for="optOutPhone">Number to stop</label>
+        <input id="optOutPhone" inputmode="tel" placeholder="0712 345 678">
+        <button type="submit" class="btn small">Add</button>
+      </form>
+      <div id="optOutList"></div>
+    </div>
+
+    <div class="card">
+      <h2>Backup and data</h2>
+      <p class="muted small">Everything is saved only in this browser on this device. Download a backup now and then, and to move to another phone.</p>
+      <div class="btn-row">
+        <button type="button" class="btn small" data-action="backup">Download backup</button>
+        <label class="btn small ghost file-btn">Restore backup<input type="file" id="restoreFile" accept=".json,application/json"></label>
+        <button type="button" class="btn small ghost" data-action="load-demo">Load demo data</button>
+        <button type="button" class="btn small ghost" data-action="clear-demo">Remove demo data</button>
+        <button type="button" class="btn small danger" data-action="clear-all">Delete everything</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Your customer data stays on this device. Reorder Desk has no server, no account and no tracking.</p>
+  <p id="promo"><a href="https://repeatfoundry.netlify.app" target="_blank" rel="noopener">Want this set up for your shop? Repeat Foundry does it for you.</a></p>
+  <p class="muted small">Free and open source (MIT). Not legal advice: get your customers' consent before messaging them.</p>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="js/core.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
