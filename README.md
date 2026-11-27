@@ -31,6 +31,8 @@ Big online stores send a reminder a few days before. Small shops on WhatsApp rar
 | **Reorder reminders** | A few days before the product runs out | "Hi Wanjiku, your Dog food 3kg should be running low about now. Shall we send the same again?…" |
 | **Win-backs** | When a customer has been quiet for twice the product's life | "Hi Wanjiku, we have missed you at Mbwa Bora!…" |
 
+*Mbwa Bora and Wanjiku are made up, for the examples only.*
+
 Tap **Send on WhatsApp** and the message opens in WhatsApp or WhatsApp Business with the customer's number filled in. You read it, press send, done. Reorder Desk marks it as sent so it never asks twice.
 
 ### Features
@@ -126,7 +128,7 @@ Chagua *Kiswahili* kwenye ukurasa wa **Messages** ili ujumbe uende kwa Kiswahili
 
 ## Done-for-you setup
 
-Reorder Desk is made by **[Repeat Foundry](https://repeatfoundry.netlify.app)** in Eldoret, Kenya. If you would rather have someone set up your thank-you, reorder and win-back messages for you, on WhatsApp Business, Shopify, Mailchimp, Klaviyo or WooCommerce, see the [Repeat-Order Setup](https://repeatfoundry.netlify.app).
+Reorder Desk is made by **[Repeat Foundry](https://repeatfoundry.netlify.app)**, a one-person business in Eldoret, Kenya. If you'd rather have someone set up your thank-you, reorder and win-back messages for you, in WhatsApp Business, Shopify Email, Mailchimp, Klaviyo (free plan) or WooCommerce, the **Repeat-Order Setup** takes 5 working days and costs KES 7,500, paid by M-Pesa on handover. [See the Repeat-Order Setup →](https://repeatfoundry.netlify.app)
 
 ## Support the project
 
